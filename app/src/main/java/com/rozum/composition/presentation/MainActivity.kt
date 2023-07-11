@@ -1,7 +1,8 @@
-package com.rozum.composition
+package com.rozum.composition.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.rozum.composition.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
