@@ -7,5 +7,5 @@ import com.rozum.composition.domain.entity.Question
 interface GameRepository {
 
     fun generateQuestion(maxSumValue: Int, countOfOptions: Int): Question
-    fun getGamesSettings(level: Level): GameSettings
+    fun getGameSettings(level: Level): GameSettings
 }
