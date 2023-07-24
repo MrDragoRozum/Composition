@@ -1,14 +1,17 @@
 package com.rozum.composition.presentation
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.rozum.composition.R
 import com.rozum.composition.databinding.FragmentGameBinding
 import com.rozum.composition.domain.entity.GameResult
-import com.rozum.composition.domain.entity.GameSettings
 import com.rozum.composition.domain.entity.Level
 
 class GameFragment : Fragment() {
@@ -17,6 +20,25 @@ class GameFragment : Fragment() {
 
     private var _binding: FragmentGameBinding? = null
     private val binding get() = _binding ?: throw RuntimeException("FragmentGameBinding == null")
+
+    private val viewModel by lazy {
+        ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+        )[GameViewModel::class.java]
+    }
+
+    private val options by lazy {
+        mutableListOf(
+            binding.textViewOption1,
+            binding.textViewOption2,
+            binding.textViewOption3,
+            binding.textViewOption4,
+            binding.textViewOption5,
+            binding.textViewOption6
+        )
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,17 +55,61 @@ class GameFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.textViewOption1.setOnClickListener {
-            launchGameFinishedFragment(
-                GameResult(
-                    true,
-                    1,
-                    2,
-                    GameSettings(
-                        1,
-                        2,
-                        3,
-                        4)))
+        listeners()
+        observes()
+        viewModel.startGame(level)
+    }
+
+    private fun observes() {
+        with(viewModel) {
+            with(binding) {
+                formattedTime.observe(viewLifecycleOwner) {
+                    textViewTimer.text = it
+                }
+                question.observe(viewLifecycleOwner) {
+                    for ((index, element) in it.options.withIndex()) {
+                        options[index].text = element.toString()
+                    }
+                    textViewSum.text = it.sum.toString()
+                    textViewLeftNumber.text = it.visibleNumber.toString()
+                }
+                progressAnswer.observe(viewLifecycleOwner) {
+                    textViewAnswersProgress.text = it
+                }
+                percentOfRightAnswer.observe(viewLifecycleOwner) {
+                    progressBar.setProgress(it, true)
+                }
+                enoughPercent.observe(viewLifecycleOwner) {
+                    progressBar.progressTintList = ColorStateList.valueOf(getColor(it))
+                }
+                enoughCount.observe(viewLifecycleOwner) {
+                    textViewAnswersProgress.setTextColor(getColor(it))
+                }
+                minPercent.observe(viewLifecycleOwner) {
+                    progressBar.secondaryProgress = it
+                }
+                gameResult.observe(viewLifecycleOwner) {
+                    launchGameFinishedFragment(it)
+                }
+            }
+        }
+    }
+
+    private fun getColor(isColor: Boolean) = if (isColor) ContextCompat.getColor(
+        requireContext(),
+        android.R.color.holo_green_light
+    )
+    else ContextCompat.getColor(
+        requireContext(),
+        android.R.color.holo_red_light
+    )
+
+    private fun listeners() {
+        for (textView in options) {
+            textView.setOnClickListener {
+                val answer = textView.text.toString().toInt()
+                viewModel.chooseAnswer(answer)
+            }
         }
     }
 
