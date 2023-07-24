@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.rozum.composition.R
 import com.rozum.composition.databinding.FragmentGameFinishedBinding
 import com.rozum.composition.domain.entity.GameResult
 
@@ -34,11 +35,43 @@ class GameFinishedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() { retryGame() }
+            override fun handleOnBackPressed() {
+                retryGame()
+            }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
         binding.buttonRetry.setOnClickListener { retryGame() }
+        installDataInViews()
     }
+
+    private fun installDataInViews() {
+        with(binding) {
+            imageViewEmojiResult.setImageResource(getSmileResId())
+            textViewRequiredAnswers.text = getString(
+                R.string.required_score,
+                gameResult.gameSettings.minCountOfRightAnswers.toString()
+            )
+            textViewRequiredPercentage.text = getString(
+                R.string.required_percentage,
+                gameResult.gameSettings.minPercentOfRightAnswers.toString()
+            )
+            textViewScoreAnswers.text = getString(
+                R.string.score_answers,
+                gameResult.countOfRightAnswers.toString()
+            )
+            textViewScorePercentage.text = getString(
+                R.string.score_percentage,
+                gameResult.getPercentOfRightAnswer.toString()
+            )
+        }
+    }
+
+    private fun getSmileResId() = if (gameResult.winner) {
+        R.drawable.ic_smile
+    } else {
+        R.drawable.ic_sad
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
