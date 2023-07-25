@@ -3,8 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_container"
-    android:name="com.rozum.composition.presentation.WelcomeFragment"
+    android:name="androidx.navigation.fragment.NavHostFragment"
+    app:navGraph="@navigation/main_navigation"
+    app:defaultNavHost="true"
     tools:context=".presentation.MainActivity"
     tools:layout="@layout/fragment_welcome" />
 
