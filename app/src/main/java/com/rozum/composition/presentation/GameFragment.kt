@@ -9,20 +9,19 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.rozum.composition.R
+import androidx.navigation.fragment.navArgs
 import com.rozum.composition.databinding.FragmentGameBinding
 import com.rozum.composition.domain.entity.GameResult
-import com.rozum.composition.domain.entity.Level
 
 class GameFragment : Fragment() {
-
-    private lateinit var level: Level
 
     private var _binding: FragmentGameBinding? = null
     private val binding get() = _binding ?: throw RuntimeException("FragmentGameBinding == null")
 
+    private val args by navArgs<GameFragmentArgs>()
+
     private val viewModelFactory by lazy {
-        GameViewModelFactory(requireActivity().application, level)
+        GameViewModelFactory(requireActivity().application, args.level)
     }
 
     private val viewModel by lazy {
@@ -40,11 +39,6 @@ class GameFragment : Fragment() {
         )
     }
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        parseArgumentLevel()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -114,32 +108,13 @@ class GameFragment : Fragment() {
     }
 
     private fun launchGameFinishedFragment(gameResult: GameResult) {
-        findNavController().navigate(
-            R.id.action_gameFragment_to_gameFinishedFragment,
-            Bundle().apply {
-                putParcelable(GameFinishedFragment.KEY_GAME_RESULT, gameResult)
-            })
+        findNavController()
+            .navigate(GameFragmentDirections.actionGameFragmentToGameFinishedFragment(gameResult)
+        )
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun parseArgumentLevel() {
-        requireArguments().getParcelable<Level>(KEY_LEVEL)?.let {
-            level = it
-        }
-    }
-
-    companion object {
-
-        const val KEY_LEVEL = "level"
-        const val NAME = "GameFragment"
-        fun newInstance(level: Level) = GameFragment().apply {
-            arguments = Bundle().apply {
-                putParcelable(KEY_LEVEL, level)
-            }
-        }
     }
 }

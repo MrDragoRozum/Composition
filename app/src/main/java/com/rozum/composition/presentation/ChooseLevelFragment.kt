@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.rozum.composition.R
 import com.rozum.composition.databinding.FragmentChooseLevelBinding
-import com.rozum.composition.domain.entity.Level.*
 import com.rozum.composition.domain.entity.Level
+import com.rozum.composition.domain.entity.Level.EASY
+import com.rozum.composition.domain.entity.Level.HARD
+import com.rozum.composition.domain.entity.Level.NORMAL
+import com.rozum.composition.domain.entity.Level.TEST
 
 
 class ChooseLevelFragment : Fragment() {
@@ -40,20 +42,13 @@ class ChooseLevelFragment : Fragment() {
     }
 
     private fun launchGameFragment(level: Level) {
-        findNavController().navigate(
-            R.id.action_chooseLevelFragment_to_gameFragment,
-            Bundle().apply {
-                putParcelable(GameFragment.KEY_LEVEL, level)
-            })
+        findNavController()
+            .navigate(ChooseLevelFragmentDirections.actionChooseLevelFragmentToGameFragment(level)
+        )
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        //        const val NAME = "ChooseLevelFragment"
-        fun newInstance() = ChooseLevelFragment()
     }
 }
