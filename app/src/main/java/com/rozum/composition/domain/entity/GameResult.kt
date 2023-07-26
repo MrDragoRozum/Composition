@@ -16,4 +16,5 @@ data class GameResult(
                 (countOfRightAnswers / countOfQuestion.toDouble() * 100).toInt()
             else
                 0
+    val countOfRightAnswersString get() = countOfRightAnswers.toString()
 }
