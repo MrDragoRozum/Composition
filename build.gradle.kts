@@ -3,5 +3,6 @@
 plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.kotlinAndroid) apply false
+    id("androidx.navigation.safeargs") version "2.6.0" apply false
 }
 true // Needed to make the Suppress annotation work for the plugins block

@@ -10,7 +10,7 @@ data class GameResult(
     val countOfQuestion: Int,
     val gameSettings: GameSettings
 ) : Parcelable {
-    val getPercentOfRightAnswer
+    val percentOfRightAnswer
         get() =
             if (countOfQuestion != 0)
                 (countOfRightAnswers / countOfQuestion.toDouble() * 100).toInt()
